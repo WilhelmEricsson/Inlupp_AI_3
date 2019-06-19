@@ -179,6 +179,13 @@ public class Grid {
     }
 
     //***************************************************
+    public Node getRandomNode() {
+        int c = (int)mainProg.random(cols);
+        int r = (int)mainProg.random(rows);
+
+        return nodes[c][r];
+    }
+
     // Används troligen tillsammans med getNearestNode().empty
     // om tom så addContent(Sprite)
 

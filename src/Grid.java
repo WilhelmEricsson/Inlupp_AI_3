@@ -190,4 +190,12 @@ public class Grid {
     // om tom så addContent(Sprite)
 
 
+    //*******************************************************
+    public int getCols(){
+        return cols;
+    }
+    public int getRows(){
+        return rows;
+    }
+
 }

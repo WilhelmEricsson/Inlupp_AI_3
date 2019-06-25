@@ -26,7 +26,7 @@ public class LabyrinthLearn extends PApplet{
 
         //Detta är tillfälligt vill bara rita ut agenten och se hur det såg ut
         Node agentStart = grid.getRandomNode();
-        agent = new Agent(this, agentStart , grid.getRandomNode(),agentStart.getPosition(), "Q-Agent", 20, 10);
+        agent = new Agent(this, agentStart , grid.getRandomNode(),agentStart.getPosition(), "Q-Agent", 20, 10, 0.1, 0.5);
     }
 
     @Override
@@ -41,4 +41,11 @@ public class LabyrinthLearn extends PApplet{
 
 
     }
+
+
+    public Grid getGrid(){
+            return grid;
+    }
+
+
 }

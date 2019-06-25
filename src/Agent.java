@@ -47,10 +47,11 @@ public class Agent extends Sprite{
 
 
     //parametrarna är ev. onödiga -> nyttja previous node - action kanske är nödvändig beroende på;
-    public void stateActionFunction(int state, int action){
-        double reward = 0.0;
-        int newState = 0; // skall vara current.id
-        qTable[state][action] = qTable[state][action] + ALPHA*((reward + GAMMA*maxQ(newState)) - qTable[state][action]);
+    public void updatePreviousStateQTableValue(int action){
+        double reward = previous.getReward();
+        int newState = current.getId();
+        int prevState = previous.getId();
+        qTable[prevState][action] = qTable[prevState][action] + ALPHA*((reward + GAMMA*maxQ(newState)) - qTable[prevState][action]);
     }
 
     //nyttjas för att hämta handlingen med högst Q-värde

@@ -18,11 +18,18 @@ public class Grid {
 
     //***************************************************
     void createGrgetId() {
-
         for (int i = 0; i < cols; i++) {
             for (int j = 0; j < rows; j++) {
                 // Initialize each object
                 nodes[i][j] = new Node(i, j, i*grid_size+grid_size, j*grid_size+grid_size);
+            }
+        }
+        determineAdjacentNodes();
+    }
+    private void determineAdjacentNodes(){
+        for (int i = 0; i < cols; i++) {
+            for (int j = 0; j < rows; j++) {
+                nodes[i][j].determineAdjacentNodes(this);
             }
         }
     }
@@ -37,18 +44,19 @@ public class Grid {
 
     public void setupNodes() {
         int counter = 0;
-        for (int i = 0; i < cols; i++) {
-            for (int j = 0; j < rows; j++) {
-                if (mainProg.get((int)nodes[i][j].getPosition().x, (int)nodes[i][j].getPosition().y) != -1) {
-                    nodes[i][j].setId(counter);
-                    nodes[i][j].setReward(-1);
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                if (mainProg.get((int)nodes[j][i].getPosition().x, (int)nodes[j][i].getPosition().y) != -1) {
+                    nodes[j][i].setId(counter);
+                    nodes[j][i].setReward(-1);
+                    nodes[j][i].setIsEmpty(false);
                 } else {
-                    nodes[i][j].setId(counter);
-                    nodes[i][j].setReward(0);
-                    if (j == rows - 1) {
-                        if (mainProg.get((int) nodes[i][j].getPosition().x, (int) nodes[i][j].getPosition().y + grid_size - 1) == -1) {
-                            nodes[i][j].setId(counter);
-                            nodes[i][j].setReward(1);
+                    nodes[j][i].setId(counter);
+                    nodes[j][i].setReward(0);
+                    if (i == rows - 1) {
+                        if (mainProg.get((int) nodes[j][i].getPosition().x, (int) nodes[j][i].getPosition().y + grid_size - 1) == -1) {
+                            nodes[j][i].setId(counter);
+                            nodes[j][i].setReward(1);
                         }
                     }
 
@@ -229,6 +237,14 @@ public class Grid {
 
     // Används troligen tillsammans med getNearestNode().empty
     // om tom så addContent(Sprite)
+    //'''''''''''''''''''''''''''''''''''''''''''''''''''''''
+    public Node getNodeByCoord(int row, int col){
+        try{
+            return nodes[col][row];
+        }catch (IndexOutOfBoundsException e){
+            return null;
+        }
+    }
 
 
     //*******************************************************

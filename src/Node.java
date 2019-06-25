@@ -5,14 +5,14 @@ public class Node {
     private float x,y;   // x,y location
     private float w,h;   // width and height
     private float angle; // angle for oscillating brightness
-
     private PVector position;
+
     private int col;
     private int row;
 
+    private Node[] adjacentNodes;
     private int id;
     private int reward;
-
     private boolean isEmpty;
 
     //***************************************************
@@ -28,7 +28,7 @@ public class Node {
         this.position = new PVector(_posx, _posy);
         this.col = _id_col;
         this.row = _id_row;
-
+        this.adjacentNodes = new Node[4];
         this.isEmpty = true;
     }
 
@@ -53,6 +53,18 @@ public class Node {
     public void setReward(int reward) {
         this.reward = reward;
     }
+
+    public void determineAdjacentNodes(Grid grid){
+        //NORTH
+        adjacentNodes[0] = grid.getNodeByCoord(row-1,col);
+        //EAST
+        adjacentNodes[1] = grid.getNodeByCoord(row,col+1);
+        //SOUTH
+        adjacentNodes[2] = grid.getNodeByCoord(row+1,col);
+        //WEST
+        adjacentNodes[3] = grid.getNodeByCoord(row,col-1);
+    }
+
 
     //-------------------------------------GETTERS--------------------------------------------
     public float getX() {
@@ -93,6 +105,15 @@ public class Node {
 
     public int getReward() {
         return reward;
+    }
+    public Node getAdjacentNode(int action){
+        return adjacentNodes[action];
+    }
+
+    //----------------------------------------------SETTERS------------------------------------------------------------
+
+    public void setIsEmpty(boolean isEmpty){
+        this.isEmpty = isEmpty;
     }
 
 }

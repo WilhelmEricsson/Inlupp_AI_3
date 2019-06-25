@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.Random;
 
 public class Agent extends Sprite{
+    //N = 0, E = 1, S = 2, W = 3
     private static final int NUM_OF_ACTIONS = 4;
     private static Random rnd;
     private LabyrinthLearn mainProg;
@@ -11,7 +12,9 @@ public class Agent extends Sprite{
     //Reinforcement vars.
     private double[][]  qTable;
     private double[] stateValue;
-    private final double ALPHA, GAMMA, EPSILON;
+    private final double ALPHA, GAMMA;
+    private double epsilon;
+    private int trails, numOfBestAction, nextAction;
     //-----------------------------CONSTRUCTORS------------------------------------------
     public Agent(PApplet mainProg, Node current, Node goal, PVector position, String name, float diameter, float radius, double ALPHA, double GAMMA){
         super(position, name, diameter, radius);
@@ -20,7 +23,8 @@ public class Agent extends Sprite{
         this.goal = goal;
         this.ALPHA = ALPHA;
         this.GAMMA = GAMMA;
-        this.EPSILON = 0.1;
+        this.epsilon = 0.1;
+        trails = numOfBestAction = 0;
         if(rnd == null){
             rnd = new Random();
         }
@@ -30,6 +34,13 @@ public class Agent extends Sprite{
     //***********************************************************************************
 
     public void update(){
+        if(current.getId() != goal.getId()) {
+            move();
+            position = current.getPosition();
+        }else{
+            System.out.println("Restarting... ");
+            current = mainProg.getGrid().getNodeByCoord(0,8);
+        }
         drawAgent();
 
     }
@@ -41,17 +52,47 @@ public class Agent extends Sprite{
         mainProg.fill(0,0,255);
         mainProg.ellipse(position.x, position.y, radius,radius);
         mainProg.fill(0,255,0);
-        mainProg.ellipse(position.x, position.y-radius, radius/2,radius/2);
+        setAgentDirection();
         mainProg.popStyle();
+    }
+    private void setAgentDirection(){
+        switch (nextAction){
+            case 0: // NORTH
+                mainProg.ellipse(position.x, position.y-radius, radius/2,radius/2);
+                break;
+            case 1: // EAST
+                mainProg.ellipse(position.x+radius, position.y, radius/2,radius/2);
+                break;
+            case 2: // SOUTH
+                mainProg.ellipse(position.x, position.y+radius, radius/2,radius/2);
+                break;
+            case 3: // WEST
+                mainProg.ellipse(position.x-radius, position.y, radius/2,radius/2);
+                break;
+        }
     }
 
 
     //parametrarna är ev. onödiga -> nyttja previous node - action kanske är nödvändig beroende på;
+    // SE ÖVER
     public void updatePreviousStateQTableValue(int action){
-        double reward = previous.getReward();
-        int newState = current.getId();
         int prevState = previous.getId();
-        qTable[prevState][action] = qTable[prevState][action] + ALPHA*((reward + GAMMA*maxQ(newState)) - qTable[prevState][action]);
+
+        if(current != null){
+            int newState = current.getId();
+            qTable[prevState][action] = qTable[prevState][action] + ALPHA*((current.getReward() + GAMMA*maxQ(newState)) - qTable[prevState][action]);
+            System.out.println("CHANGE: STATE - " + prevState + " Action - " + action + " values -> " + qTable[prevState][action] + "\t E: " + epsilon);
+            if(!current.empty()){
+                current = previous;
+            }
+        }else{
+            double reward = -1;
+            qTable[prevState][action] = qTable[prevState][action] + ALPHA*((reward) - qTable[prevState][action]);
+
+            System.out.println("CHANGE: STATE - " + prevState + " Action - " + action + " values -> " + qTable[prevState][action] + "\t|WALKED INTO A WALL| -- E: \" + epsilon");
+            current = previous;
+        }
+
     }
 
     //nyttjas för att hämta handlingen med högst Q-värde
@@ -65,6 +106,18 @@ public class Agent extends Sprite{
         return qTable[state][action];
     }
 
+    //Används för att fatta belust om action vid Node current
+    private int maxQAction(){
+        int action = 0;
+        int state = current.getId();
+        for(int i = (action + 1); i < NUM_OF_ACTIONS; i++ ){
+            if(qTable[state][action] < qTable[state][i]){
+                action = i;
+            }
+        }
+        return action;
+    }
+
 
    private void initializeQTable(){
         int numOfStates = mainProg.getGrid().getRows()*mainProg.getGrid().getCols();
@@ -73,8 +126,33 @@ public class Agent extends Sprite{
             for(int action = 0; action < NUM_OF_ACTIONS; action++){
                 qTable[state][action] = rnd.nextDouble(); // fixa precision
             }
-            System.out.println(Arrays.toString(qTable[state]));
+            System.out.println(state + " :" + Arrays.toString(qTable[state]));
         }
+    }
+
+    private int greedyEpsilonPolicy(){
+        int action = 0;
+        double randomProb = rnd.nextDouble();
+
+        if(randomProb <= epsilon){
+            action = rnd.nextInt(4);
+        }else{
+            action = maxQAction();
+            numOfBestAction++;
+        }
+        trails++;
+
+        epsilon = numOfBestAction/(double)trails;
+
+        return action;
+    }
+
+    public void move(){
+        nextAction = greedyEpsilonPolicy();
+        previous = current;
+        current = current.getAdjacentNode(nextAction);
+        updatePreviousStateQTableValue(nextAction);
+
     }
 
 

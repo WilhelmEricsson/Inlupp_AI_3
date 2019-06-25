@@ -27,6 +27,37 @@ public class Grid {
         }
     }
 
+    public void printIds() {
+        for (int i = 0; i < cols; i++) {
+            for (int j = 0; j < rows; j++) {
+                System.out.println(nodes[i][j].getId());
+            }
+        }
+    }
+
+    public void setupNodes() {
+        int counter = 0;
+        for (int i = 0; i < cols; i++) {
+            for (int j = 0; j < rows; j++) {
+                if (mainProg.get((int)nodes[i][j].getPosition().x, (int)nodes[i][j].getPosition().y) != -1) {
+                    nodes[i][j].setId(counter);
+                    nodes[i][j].setReward(-1);
+                } else {
+                    nodes[i][j].setId(counter);
+                    nodes[i][j].setReward(0);
+                    if (j == rows - 1) {
+                        if (mainProg.get((int) nodes[i][j].getPosition().x, (int) nodes[i][j].getPosition().y + grid_size - 1) == -1) {
+                            nodes[i][j].setId(counter);
+                            nodes[i][j].setReward(1);
+                        }
+                    }
+
+                }
+                counter++;
+            }
+        }
+    }
+
     //***************************************************
     // ANVÄNDS INTE!
     void display1() {
@@ -44,11 +75,21 @@ public class Grid {
         for (int i = 0; i < cols; i++) {
             for (int j = 0; j < rows; j++) {
                 // Initialize each object
+                if (nodes[i][j].getReward() == -1) {
+                    mainProg.stroke(255, 0, 0);
+                } else if (nodes[i][j].getReward() == 1) {
+                    mainProg.stroke(0, 255, 0);
+                } else if (nodes[i][j].getReward() == 0) {
+                    mainProg.stroke(0);
+                }
+
+                /*
                 if (mainProg.get((int)nodes[i][j].getPosition().x, (int)nodes[i][j].getPosition().y) != -1) {
                     mainProg.stroke(255, 0, 0);
                 } else {
                     mainProg.stroke(0);
                 }
+                */
 
                 mainProg.ellipse(nodes[i][j].getPosition().x, nodes[i][j].getPosition().y, 5.0f, 5.0f);
                 //println("nodes[i][j].position.x: " + nodes[i][j].position.x);

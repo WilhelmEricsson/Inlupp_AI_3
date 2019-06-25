@@ -10,6 +10,9 @@ public class Node {
     private int col;
     private int row;
 
+    private int id;
+    private int reward;
+
     private boolean isEmpty;
 
     //***************************************************
@@ -30,7 +33,7 @@ public class Node {
     }
 
     //***************************************************
-   public  Node(float tempX, float tempY, float tempW, float tempH, float tempAngle) {
+   public Node(float tempX, float tempY, float tempW, float tempH, float tempAngle) {
         x = tempX;
         y = tempY;
         w = tempW;
@@ -41,6 +44,14 @@ public class Node {
     //***************************************************
     public boolean empty() {
         return this.isEmpty;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setReward(int reward) {
+        this.reward = reward;
     }
 
     //-------------------------------------GETTERS--------------------------------------------
@@ -74,6 +85,14 @@ public class Node {
 
     public int getRow() {
         return row;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public int getReward() {
+        return reward;
     }
 
 }

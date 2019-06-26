@@ -11,7 +11,7 @@ public class LabyrinthLearn extends PApplet{
     private Agent agent;
 
     // Set this according to labyrinth size
-    private final int GRID_SIZE = 20;
+    private final int GRID_SIZE = 30;
     private final int WINDOW_SIZE = GRID_SIZE * GRID_SIZE;
     private final int WINDOW_SIZE_ZOOM = (int)Math.round(WINDOW_SIZE*1.01);
 
@@ -31,21 +31,23 @@ public class LabyrinthLearn extends PApplet{
 
     @Override
     public void setup() {
-        grid = new Grid(this,GRID_SIZE-1, GRID_SIZE-1, GRID_SIZE);
-        img = loadImage("labyrint1.png");
-        frameRate(500);
-
+        img = loadImage("labyrint2.png");
         drawLabyrinth();
-        grid.setupNodes();
-        double[][] qTable = readQTable(new File("resources/qTable.txt"));
+        grid = new Grid(this,GRID_SIZE-1, GRID_SIZE-1, GRID_SIZE);
 
-        agent = new Agent(this, grid.getStartNode(), grid.getGoalNode(), grid.getStartNode().getPosition(), "Q-Agent", 20, 10, 0.9, 0.5, 200, qTable);
+
+        frameRate(500);
+        //Detta är tillfälligt vill bara rita ut agenten och se hur det såg ut
+        Node agentStart = grid.getNodeByCoord(0,8);
+        double[][] qTable = readQTable(new File("resources/qTable.txt"));
+        agent = new Agent(this, grid.getStartNode() , grid.getGoalNode(), grid.getStartNode().getPosition(), "Q-Agent", 20, 10, 0.5, 0.5, 100, null);
     }
 
     private void drawLabyrinth() {
         img.resize(WINDOW_SIZE_ZOOM, WINDOW_SIZE_ZOOM);
         imageMode(CENTER);
         image(img, width/2, height/2);
+
     }
 
     @Override

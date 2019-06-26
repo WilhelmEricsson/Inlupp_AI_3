@@ -1,12 +1,15 @@
+import processing.core.PApplet;
 import processing.core.PVector;
 public class Node {
+    private static double maxQColor, minQColor;
     // A node object knows about its location in the grid
     // as well as its size with the variables x,y,w,h
     private float x,y;   // x,y location
     private float w,h;   // width and height
     private float angle; // angle for oscillating brightness
     private PVector position;
-
+    private int qColor;
+    private boolean isGreen;
     private int col;
     private int row;
 
@@ -109,11 +112,38 @@ public class Node {
     public Node getAdjacentNode(int action){
         return adjacentNodes[action];
     }
+    public int getQColor(){
+        return qColor;
+    }
+    public boolean isGreen(){
+        return isGreen;
+    }
 
     //----------------------------------------------SETTERS------------------------------------------------------------
 
     public void setIsEmpty(boolean isEmpty){
         this.isEmpty = isEmpty;
     }
+
+    public void setQColor(double qValue){
+        if(qValue >= 0.0){
+            isGreen = true;
+            if(qValue > maxQColor){
+                maxQColor = qValue;
+            }
+            qColor = (int)(255 * (qValue/maxQColor));
+        }else{
+            isGreen = false;
+            if(qValue < minQColor){
+                minQColor = qValue;
+            }
+            qColor = (int)(255 *( -1*(qValue/minQColor)));
+        }
+
+
+    }
+
+
+
 
 }

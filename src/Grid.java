@@ -1,9 +1,12 @@
 import processing.core.*;
 import java.util.ArrayList;
+import java.util.HashMap;
+
 public class Grid {
     private int cols, rows;
     private int grid_size;
     private Node[][] nodes;
+    private HashMap<Integer, Node> nodesByID;
     private Node startNode, goalNode;
     private PApplet mainProg;
     //***************************************************
@@ -13,8 +16,9 @@ public class Grid {
         rows = _rows;
         grid_size = _grid_size;
         nodes = new Node[cols][rows];
-
+        nodesByID = new HashMap<>();
         createGrgetId();
+        setupNodes();
     }
 
     //***************************************************
@@ -48,15 +52,13 @@ public class Grid {
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
                 if (mainProg.get((int)nodes[j][i].getPosition().x, (int)nodes[j][i].getPosition().y) != -1) {
-                    nodes[j][i].setId(counter);
                     nodes[j][i].setReward(-1);
                     nodes[j][i].setIsEmpty(false);
                 } else {
-                    nodes[j][i].setId(counter);
+
                     nodes[j][i].setReward(0);
                     if (i == rows - 1) {
                         if (mainProg.get((int) nodes[j][i].getPosition().x, (int) nodes[j][i].getPosition().y + grid_size - 1) == -1) {
-                            nodes[j][i].setId(counter);
                             nodes[j][i].setReward(1);
                             goalNode = nodes[j][i];
                         }
@@ -67,22 +69,13 @@ public class Grid {
                         }
                     }
                 }
+                nodes[j][i].setId(counter);
+                nodesByID.put(counter,nodes[j][i]);
                 counter++;
             }
         }
     }
 
-    //***************************************************
-    // ANVÄNDS INTE!
-    void display1() {
-        for (int i = 0; i < cols; i++) {
-            for (int j = 0; j < rows; j++) {
-                // Initialize each object
-                mainProg.line(j*grid_size+grid_size, 0, j*grid_size+grid_size, mainProg.height);
-            }
-            mainProg.line(0, i*grid_size+grid_size,mainProg.width, i*grid_size+grid_size);
-        }
-    }
 
     //***************************************************
     void display() {
@@ -95,21 +88,17 @@ public class Grid {
                     mainProg.stroke(0, 255, 0);
                 } else if (nodes[i][j].getReward() == 0) {
                     mainProg.stroke(0);
-                }
+                    if(nodes[i][j].isGreen()){
+                        mainProg.fill(0 , nodes[i][j].getQColor(),0);
+                    }else{
+                        mainProg.fill(nodes[i][j].getQColor(), 0 , 0);
+                    }
 
-                /*
-                if (mainProg.get((int)nodes[i][j].getPosition().x, (int)nodes[i][j].getPosition().y) != -1) {
-                    mainProg.stroke(255, 0, 0);
-                } else {
-                    mainProg.stroke(0);
                 }
-                */
 
                 mainProg.ellipse(nodes[i][j].getPosition().x, nodes[i][j].getPosition().y, 5.0f, 5.0f);
-                //println("nodes[i][j].position.x: " + nodes[i][j].position.x);
-                //println(nodes[i][j]);
+                mainProg.fill(255,255,255);
             }
-            //line(0, i*grid_size+grid_size, width, i*grid_size+grid_size);
         }
     }
 
@@ -259,6 +248,11 @@ public class Grid {
     }
     public int getRows(){
         return rows;
+    }
+
+
+    public Node getNodeByID(int nodeId){
+        return nodesByID.get(nodeId);
     }
 
     public Node getStartNode() {

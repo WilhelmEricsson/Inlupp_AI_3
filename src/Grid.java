@@ -1,13 +1,13 @@
 import processing.core.*;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 
 public class Grid {
     private int cols, rows;
     private int grid_size;
     private Node[][] nodes;
     private HashMap<Integer, Node> nodesByID;
+    private Node startNode, goalNode;
     private PApplet mainProg;
     //***************************************************
     Grid(PApplet mainProg,int _cols, int _rows, int _grid_size) {
@@ -59,11 +59,15 @@ public class Grid {
                     nodes[j][i].setReward(0);
                     if (i == rows - 1) {
                         if (mainProg.get((int) nodes[j][i].getPosition().x, (int) nodes[j][i].getPosition().y + grid_size - 1) == -1) {
-
                             nodes[j][i].setReward(1);
+                            goalNode = nodes[j][i];
                         }
                     }
-
+                    if (i == 0) {
+                        if (mainProg.get((int) nodes[j][i].getPosition().x, (int) nodes[j][i].getPosition().y - grid_size + 1) == -1) {
+                            startNode = nodes[j][i];
+                        }
+                    }
                 }
                 nodes[j][i].setId(counter);
                 nodesByID.put(counter,nodes[j][i]);
@@ -250,6 +254,14 @@ public class Grid {
 
     public Node getNodeByID(int nodeId){
         return nodesByID.get(nodeId);
+    }
+
+    public Node getStartNode() {
+        return startNode;
+    }
+
+    public Node getGoalNode() {
+        return goalNode;
     }
 
     //********************************************************

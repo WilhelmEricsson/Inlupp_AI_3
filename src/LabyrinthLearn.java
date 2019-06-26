@@ -12,7 +12,7 @@ public class LabyrinthLearn extends PApplet{
     private double learningRate = 0.9;
     private double discountFactor = 0.5;
     private int episodes = 100;
-
+    private int currentMaze = 1;
     public static int frameRate;
 
     // Set this according to labyrinth size
@@ -59,7 +59,7 @@ public class LabyrinthLearn extends PApplet{
 
     @Override
     public void draw() {
-        surface.setTitle("|Labyrinth Learn| ***" + agent.getAgentActivity() + "*** Episode: " + agent.getLearningEpisodes());
+        surface.setTitle("|Labyrinth " + currentMaze + "| ***" + agent.getAgentActivity() + "*** Episode: " + agent.getLearningEpisodes());
         drawLabyrinth();
         grid.display();
         agent.update();
@@ -113,6 +113,7 @@ public class LabyrinthLearn extends PApplet{
             filePath = "resources/laby" + mapNum + "_qTable.txt";
             drawLabyrinth();
             grid = new Grid(this,GRID_SIZE-1, GRID_SIZE-1, GRID_SIZE);
+            currentMaze = mapNum;
             restartAgent();
 
     }
@@ -168,6 +169,7 @@ public class LabyrinthLearn extends PApplet{
                 pw.println();
             }
             pw.close();
+            System.out.println("Q Table saved to file: " + filePath);
         } catch(Exception e) {
             e.printStackTrace();
         }

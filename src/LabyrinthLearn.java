@@ -11,7 +11,7 @@ public class LabyrinthLearn extends PApplet{
     private Agent agent;
 
     // Set this according to labyrinth size
-    private final int GRID_SIZE = 30;
+    private final int GRID_SIZE = 20;
     private final int WINDOW_SIZE = GRID_SIZE * GRID_SIZE;
     private final int WINDOW_SIZE_ZOOM = (int)Math.round(WINDOW_SIZE*1.01);
 
@@ -31,7 +31,7 @@ public class LabyrinthLearn extends PApplet{
 
     @Override
     public void setup() {
-        img = loadImage("labyrint2.png");
+        img = loadImage("labyrint1.png");
         drawLabyrinth();
         grid = new Grid(this,GRID_SIZE-1, GRID_SIZE-1, GRID_SIZE);
 

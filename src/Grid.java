@@ -59,7 +59,7 @@ public class Grid {
                     nodes[j][i].setReward(0);
                     if (i == rows - 1) {
                         if (mainProg.get((int) nodes[j][i].getPosition().x, (int) nodes[j][i].getPosition().y + grid_size - 1) == -1) {
-                            nodes[j][i].setReward(1);
+                            nodes[j][i].setReward(10);
                             goalNode = nodes[j][i];
                         }
                     }
@@ -84,7 +84,7 @@ public class Grid {
                 // Initialize each object
                 if (nodes[i][j].getReward() == -1) {
                     mainProg.stroke(255, 0, 0);
-                } else if (nodes[i][j].getReward() == 1) {
+                } else if (nodes[i][j].getReward() == 10) {
                     mainProg.stroke(0, 255, 0);
                 } else if (nodes[i][j].getReward() == 0) {
                     nodes[i][j].setQColor();

@@ -9,8 +9,14 @@ public class LabyrinthLearn extends PApplet{
     private  Grid grid;
     private PImage img;
     private Agent agent;
+    private double learningRate = 0.9;
+    private double discountFactor = 0.5;
+    private int episodes = 100;
+
+    public static int frameRate;
 
     // Set this according to labyrinth size
+    private final String filePath = "resources/qTable.txt";
     private final int GRID_SIZE = 20;
     private final int WINDOW_SIZE = GRID_SIZE * GRID_SIZE;
     private final int WINDOW_SIZE_ZOOM = (int)Math.round(WINDOW_SIZE*1.01);
@@ -32,15 +38,13 @@ public class LabyrinthLearn extends PApplet{
     @Override
     public void setup() {
         img = loadImage("labyrint1.png");
+        System.out.println(img.height + " " + img.width);
         drawLabyrinth();
         grid = new Grid(this,GRID_SIZE-1, GRID_SIZE-1, GRID_SIZE);
-
-
-        frameRate(500);
+        setFrameRate(500);
         //Detta är tillfälligt vill bara rita ut agenten och se hur det såg ut
-        Node agentStart = grid.getNodeByCoord(0,8);
-        double[][] qTable = readQTable(new File("resources/qTable.txt"));
-        agent = new Agent(this, grid.getStartNode() , grid.getGoalNode(), grid.getStartNode().getPosition(), "Q-Agent", 20, 10, 0.5, 0.5, 100, null);
+        double[][] qTable = readQTable(new File(filePath));
+        agent = new Agent(this, grid.getStartNode() , grid.getGoalNode(), grid.getStartNode().getPosition(), "Q-Agent", 20, 10, learningRate, discountFactor, episodes, qTable);
     }
 
     private void drawLabyrinth() {
@@ -65,9 +69,40 @@ public class LabyrinthLearn extends PApplet{
 
     @Override
     public void keyPressed() {
-        if (key == 'p') {
-            printQTable(agent.getQTable());
-        }
+            switch (key){
+                case 's':
+                    saveQTable(agent.getQTable());
+                    break;
+                case 'r'://Reset
+                    restartAgent();
+                    break;
+                case 'R': //Reset from file
+                    restartAgent(readQTable(new File(filePath)));
+                    break;
+                case 't': //Testing
+                    agent.setAgentActivity(false);
+                    break;
+                case 'T':  //Training
+                    agent.setAgentActivity(true);
+                    break;
+                case '+':
+                    setFrameRate(this.frameRate+10);
+                    break;
+                case '-':
+                    setFrameRate(this.frameRate-10);
+                    break;
+            }
+
+    }
+    private void restartAgent(){
+        System.out.println("***Total Reset***");
+        setFrameRate(500);
+        restartAgent(null);
+    }
+    private void restartAgent(double[][] qTable){
+        System.out.println("Restarting");
+        agent = new Agent(this, grid.getStartNode() , grid.getGoalNode(), grid.getStartNode().getPosition(), "Q-Agent", 20, 10, learningRate, discountFactor, episodes, qTable);
+
     }
 
     public double[][] readQTable(File path) {
@@ -97,7 +132,7 @@ public class LabyrinthLearn extends PApplet{
         }
     }
 
-    public void printQTable(double[][] qTable) {
+    public void saveQTable(double[][] qTable) {
         try {
             PrintWriter pw = new PrintWriter("resources/qTable.txt");
             for (int i = 0; i < qTable.length; i++) {
@@ -116,4 +151,13 @@ public class LabyrinthLearn extends PApplet{
         }
     }
 
+
+    public void setFrameRate(int frameRate){
+            this.frameRate = frameRate;
+            if(this.frameRate <= 0) {
+                System.err.println("Frame rate at its lowest!");
+                this.frameRate = 50;
+            }
+            frameRate(this.frameRate);
+    }
 }

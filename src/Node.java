@@ -155,15 +155,16 @@ public class Node {
             if(qValue < threshold[2]){
                 if(qValue < threshold[1]){
                     if(qValue < threshold[0]){
-                        qColor = 66;
+                        qColor = 255;
                     }else{
-                        qColor = 129;
+                        qColor = 192;
                     }
                 }else{
-                    qColor = 192;
+                    qColor = 129;
+
                 }
             }else{
-                qColor = 255;
+                qColor = 66;
             }
         }
 

@@ -14,7 +14,6 @@ public class Agent extends Sprite{
     private boolean isTraining;
     //Reinforcement vars.
     private double[][]  qTable;
-    private double[] stateValue;
     private final double ALPHA, GAMMA;
     private double epsilon;
     private int trails, numOfBestAction, nextAction, learningEpisodes;
@@ -45,13 +44,13 @@ public class Agent extends Sprite{
             position = current.getPosition();
         }else{
             System.out.println("Restarting... ");
-            if(learningEpisodes > 0){
+            if(learningEpisodes > 0 && isTraining){
                 System.out.println("Q_Value Average: " + Node.average);
                 mainProg.getGrid().setNodeColors();
                 printQTableToConsole();
                 learningEpisodes--;
             }
-            current = mainProg.getGrid().getNodeByCoord(0,8);
+            current = mainProg.getGrid().getStartNode();
         }
         drawAgent();
 
@@ -144,15 +143,25 @@ public class Agent extends Sprite{
                System.out.println(state + " :" + Arrays.toString(this.qTable[state]));
            }
        } else {
-           System.out.println("qTable loaded from file.");
-           this.qTable = qTable;
+           preparePretrainedAgent(qTable);
        }
        mainProg.getGrid().setNodeColors();
 
     }
+    private void preparePretrainedAgent(double[][] qTable){
+        System.out.println("qTable loaded from file.");
+        learningEpisodes = 0;
+        this.qTable = qTable;
+        for(int state = 0; state < this.qTable.length;state++ ){
+            Node temp = mainProg.getGrid().getNodeByID(state);
+            temp.setQValue(maxQ(temp.getId()));
+        }
+
+
+    }
 
     private int greedyEpsilonPolicy(){
-        int action = 0;
+        int action;
         double randomProb = rnd.nextDouble() + 0.2;
 
         if(randomProb <= epsilon){
@@ -169,12 +178,13 @@ public class Agent extends Sprite{
     }
 
     public void move(){
-        if(learningEpisodes > 0){
+        if(learningEpisodes > 0 && isTraining){
 
             nextAction = greedyEpsilonPolicy();
 
         }else{
             if(isTraining){
+                mainProg.setFrameRate(10);
                 agentActivity = "Testing";
                 isTraining = false;
                 System.out.println("Starting Test process");
@@ -227,6 +237,23 @@ public class Agent extends Sprite{
     public void printQTableToConsole(){
         for(int state = 0; state < qTable.length; state++){
             System.out.println(state + " :" + Arrays.toString(this.qTable[state]));
+        }
+    }
+
+    public void setAgentActivity(boolean isTraining){
+        if(isTraining != this.isTraining){
+            if(!isTraining){
+                mainProg.setFrameRate(10);
+                agentActivity = "Testing";
+            }else{
+                mainProg.setFrameRate(500);
+                if(learningEpisodes <= 0){
+                    learningEpisodes = 100;
+                }
+                agentActivity = "Training";
+            }
+            this.isTraining = isTraining;
+            current = mainProg.getGrid().getStartNode();
         }
     }
 

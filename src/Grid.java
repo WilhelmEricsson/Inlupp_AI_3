@@ -4,6 +4,7 @@ public class Grid {
     private int cols, rows;
     private int grid_size;
     private Node[][] nodes;
+    private Node startNode, goalNode;
     private PApplet mainProg;
     //***************************************************
     Grid(PApplet mainProg,int _cols, int _rows, int _grid_size) {
@@ -57,9 +58,14 @@ public class Grid {
                         if (mainProg.get((int) nodes[j][i].getPosition().x, (int) nodes[j][i].getPosition().y + grid_size - 1) == -1) {
                             nodes[j][i].setId(counter);
                             nodes[j][i].setReward(1);
+                            goalNode = nodes[j][i];
                         }
                     }
-
+                    if (i == 0) {
+                        if (mainProg.get((int) nodes[j][i].getPosition().x, (int) nodes[j][i].getPosition().y - grid_size + 1) == -1) {
+                            startNode = nodes[j][i];
+                        }
+                    }
                 }
                 counter++;
             }
@@ -253,6 +259,14 @@ public class Grid {
     }
     public int getRows(){
         return rows;
+    }
+
+    public Node getStartNode() {
+        return startNode;
+    }
+
+    public Node getGoalNode() {
+        return goalNode;
     }
 
 }

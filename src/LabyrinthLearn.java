@@ -16,7 +16,7 @@ public class LabyrinthLearn extends PApplet{
     public static int frameRate;
 
     // Set this according to labyrinth size
-    private final String filePath = "resources/qTable.txt";
+    private String filePath = "resources/laby1_qTable.txt";
     private final int GRID_SIZE = 20;
     private final int WINDOW_SIZE = GRID_SIZE * GRID_SIZE;
     private final int WINDOW_SIZE_ZOOM = (int)Math.round(WINDOW_SIZE*1.01);
@@ -37,14 +37,17 @@ public class LabyrinthLearn extends PApplet{
 
     @Override
     public void setup() {
-        img = loadImage("labyrint1.png");
-        System.out.println(img.height + " " + img.width);
+        loadMap("labyrint1.png");
         drawLabyrinth();
         grid = new Grid(this,GRID_SIZE-1, GRID_SIZE-1, GRID_SIZE);
         setFrameRate(500);
         //Detta är tillfälligt vill bara rita ut agenten och se hur det såg ut
         double[][] qTable = readQTable(new File(filePath));
         agent = new Agent(this, grid.getStartNode() , grid.getGoalNode(), grid.getStartNode().getPosition(), "Q-Agent", 20, 10, learningRate, discountFactor, episodes, qTable);
+    }
+
+    private void loadMap(String mapName){
+        img = loadImage(mapName);
     }
 
     private void drawLabyrinth() {
@@ -91,7 +94,26 @@ public class LabyrinthLearn extends PApplet{
                 case '-':
                     setFrameRate(this.frameRate-10);
                     break;
+                case '1':
+                    changeMap(1);
+                    break;
+                case '2':
+                    changeMap(2);
+                    break;
+                case '3':
+                    changeMap(3);
+                    break;
+
             }
+
+    }
+
+    private void changeMap(int mapNum){
+            loadMap("labyrint"+mapNum+".png");
+            filePath = "resources/laby" + mapNum + "_qTable.txt";
+            drawLabyrinth();
+            grid = new Grid(this,GRID_SIZE-1, GRID_SIZE-1, GRID_SIZE);
+            restartAgent();
 
     }
     private void restartAgent(){
@@ -134,7 +156,7 @@ public class LabyrinthLearn extends PApplet{
 
     public void saveQTable(double[][] qTable) {
         try {
-            PrintWriter pw = new PrintWriter("resources/qTable.txt");
+            PrintWriter pw = new PrintWriter(filePath);
             for (int i = 0; i < qTable.length; i++) {
                 for (int j = 0; j < qTable[i].length; j++) {
                     if (j != qTable[i].length -1) {

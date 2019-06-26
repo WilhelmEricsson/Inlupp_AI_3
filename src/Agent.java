@@ -167,9 +167,11 @@ public class Agent extends Sprite{
             nextAction = greedyEpsilonPolicy();
 
         }else{
-            agentActivity = "Testing";
-            isTraining = false;
-            System.out.println("Starting Test process");
+            if(isTraining){
+                agentActivity = "Testing";
+                isTraining = false;
+                System.out.println("Starting Test process");
+            }
             nextAction = maxQAction();
         }
         previous = current;

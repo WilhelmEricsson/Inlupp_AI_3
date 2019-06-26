@@ -9,14 +9,16 @@ public class Agent extends Sprite{
     private static Random rnd;
     private LabyrinthLearn mainProg;
     private Node current, previous, goal;
+    private String agentActivity;
+    private boolean isTraining;
     //Reinforcement vars.
     private double[][]  qTable;
     private double[] stateValue;
     private final double ALPHA, GAMMA;
     private double epsilon;
-    private int trails, numOfBestAction, nextAction;
+    private int trails, numOfBestAction, nextAction, learningEpisodes;
     //-----------------------------CONSTRUCTORS------------------------------------------
-    public Agent(PApplet mainProg, Node current, Node goal, PVector position, String name, float diameter, float radius, double ALPHA, double GAMMA){
+    public Agent(PApplet mainProg, Node current, Node goal, PVector position, String name, float diameter, float radius, double ALPHA, double GAMMA, int learningEpisodes){
         super(position, name, diameter, radius);
         this.mainProg = (LabyrinthLearn) mainProg;
         this.current = current;
@@ -24,11 +26,14 @@ public class Agent extends Sprite{
         this.ALPHA = ALPHA;
         this.GAMMA = GAMMA;
         this.epsilon = 0.1;
+        this.learningEpisodes = learningEpisodes;
         trails = numOfBestAction = 0;
         if(rnd == null){
             rnd = new Random();
         }
         initializeQTable();
+        this.agentActivity = "Training";
+        this.isTraining = true;
 
     }
     //***********************************************************************************
@@ -39,6 +44,9 @@ public class Agent extends Sprite{
             position = current.getPosition();
         }else{
             System.out.println("Restarting... ");
+            if(learningEpisodes > 0){
+                learningEpisodes--;
+            }
             current = mainProg.getGrid().getNodeByCoord(0,8);
         }
         drawAgent();
@@ -81,7 +89,7 @@ public class Agent extends Sprite{
         if(current != null){
             int newState = current.getId();
             qTable[prevState][action] = qTable[prevState][action] + ALPHA*((current.getReward() + GAMMA*maxQ(newState)) - qTable[prevState][action]);
-            System.out.println("CHANGE: STATE - " + prevState + " Action - " + action + " values -> " + qTable[prevState][action] + "\t E: " + epsilon);
+           // System.out.println("CHANGE: STATE - " + prevState + " Action - " + action + " values -> " + qTable[prevState][action] + "\t E: " + epsilon);
             if(!current.empty()){
                 current = previous;
             }
@@ -89,7 +97,7 @@ public class Agent extends Sprite{
             double reward = -1;
             qTable[prevState][action] = qTable[prevState][action] + ALPHA*((reward) - qTable[prevState][action]);
 
-            System.out.println("CHANGE: STATE - " + prevState + " Action - " + action + " values -> " + qTable[prevState][action] + "\t|WALKED INTO A WALL| -- E: \" + epsilon");
+            //System.out.println("CHANGE: STATE - " + prevState + " Action - " + action + " values -> " + qTable[prevState][action] + "\t|WALKED INTO A WALL| -- E: " + epsilon);
             current = previous;
         }
 
@@ -124,7 +132,7 @@ public class Agent extends Sprite{
         qTable = new double[numOfStates][NUM_OF_ACTIONS];
         for(int state = 0; state < numOfStates; state++){
             for(int action = 0; action < NUM_OF_ACTIONS; action++){
-                qTable[state][action] = rnd.nextDouble(); // fixa precision
+                qTable[state][action] = rnd.nextDouble();
             }
             System.out.println(state + " :" + Arrays.toString(qTable[state]));
         }
@@ -132,7 +140,7 @@ public class Agent extends Sprite{
 
     private int greedyEpsilonPolicy(){
         int action = 0;
-        double randomProb = rnd.nextDouble();
+        double randomProb = rnd.nextDouble() + 0.2;
 
         if(randomProb <= epsilon){
             action = rnd.nextInt(4);
@@ -148,15 +156,30 @@ public class Agent extends Sprite{
     }
 
     public void move(){
-        nextAction = greedyEpsilonPolicy();
+        if(learningEpisodes > 0){
+
+            nextAction = greedyEpsilonPolicy();
+
+        }else{
+            agentActivity = "Testing";
+            isTraining = false;
+            System.out.println("Starting Test process");
+            nextAction = maxQAction();
+        }
         previous = current;
         current = current.getAdjacentNode(nextAction);
-        updatePreviousStateQTableValue(nextAction);
-
+        if(isTraining){
+            updatePreviousStateQTableValue(nextAction);
+        }
     }
 
 
-
+    public int getLearningEpisodes(){
+        return learningEpisodes;
+    }
+    public String getAgentActivity(){
+        return agentActivity;
+    }
 
 
 }

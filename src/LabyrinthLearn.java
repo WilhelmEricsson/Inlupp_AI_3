@@ -56,8 +56,8 @@ public class LabyrinthLearn extends PApplet{
         drawLabyrinth();
         grid.display();
         agent.update();
+        agent.drawNodeInfo();
     }
-
 
     public Grid getGrid(){
             return grid;

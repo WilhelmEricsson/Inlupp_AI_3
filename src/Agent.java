@@ -194,6 +194,21 @@ public class Agent extends Sprite{
         return average/NUM_OF_ACTIONS;
     }
 
+    public void drawNodeInfo() {
+        PVector pvec = new PVector(mainProg.mouseX, mainProg.mouseY);
+        Node n = mainProg.getGrid().getNearestNode(pvec);
+
+        PVector distanceVect = PVector.sub(pvec, n.getPosition());
+        float distanceVectMag = distanceVect.mag();
+        if (distanceVectMag < 10) {
+            mainProg.fill(255, 255, 0);
+            mainProg.ellipse(n.getPosition().x, n.getPosition().y, 5, 5);
+            mainProg.fill(0);
+            mainProg.rect(0, 0, 185, 15);
+            mainProg.fill(255);
+            mainProg.text("maxQ: " + maxQ(n.getId()), 2, 12);
+        }
+    }
 
     public int getLearningEpisodes(){
         return learningEpisodes;

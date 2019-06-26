@@ -130,12 +130,12 @@ public class Agent extends Sprite{
    private void initializeQTable(double[][] qTable){
        if (qTable == null) {
            int numOfStates = mainProg.getGrid().getRows()*mainProg.getGrid().getCols();
-           qTable = new double[numOfStates][NUM_OF_ACTIONS];
+           this.qTable = new double[numOfStates][NUM_OF_ACTIONS];
            for(int state = 0; state < numOfStates; state++){
                for(int action = 0; action < NUM_OF_ACTIONS; action++){
-                   qTable[state][action] = rnd.nextDouble();
+                   this.qTable[state][action] = rnd.nextDouble();
                }
-               System.out.println(state + " :" + Arrays.toString(qTable[state]));
+               System.out.println(state + " :" + Arrays.toString(this.qTable[state]));
            }
        } else {
            System.out.println("qTable loaded from file.");

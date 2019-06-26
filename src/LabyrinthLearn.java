@@ -35,7 +35,7 @@ public class LabyrinthLearn extends PApplet{
         //Detta är tillfälligt vill bara rita ut agenten och se hur det såg ut
         Node agentStart = grid.getNodeByCoord(0,8);
         double[][] qTable = readQTable(new File("resources/qTable.txt"));
-        agent = new Agent(this, agentStart , grid.getNodeByCoord(18,10),agentStart.getPosition(), "Q-Agent", 20, 10, 0.5, 0.5, 100, null);
+        agent = new Agent(this, agentStart , grid.getNodeByCoord(18,10),agentStart.getPosition(), "Q-Agent", 20, 10, 0.5, 0.5, 150, null);
     }
 
     private void drawLabyrinth() {

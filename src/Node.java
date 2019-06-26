@@ -1,7 +1,8 @@
 import processing.core.PApplet;
 import processing.core.PVector;
 public class Node {
-    private static double maxQColor, minQColor;
+    public static double average;
+    public static double[] threshold;
     // A node object knows about its location in the grid
     // as well as its size with the variables x,y,w,h
     private float x,y;   // x,y location
@@ -9,6 +10,7 @@ public class Node {
     private float angle; // angle for oscillating brightness
     private PVector position;
     private int qColor;
+    private double qValue;
     private boolean isGreen;
     private int col;
     private int row;
@@ -33,6 +35,9 @@ public class Node {
         this.row = _id_row;
         this.adjacentNodes = new Node[4];
         this.isEmpty = true;
+        if(threshold == null){
+            threshold = new double[6];
+        }
     }
 
     //***************************************************
@@ -118,6 +123,9 @@ public class Node {
     public boolean isGreen(){
         return isGreen;
     }
+    public double getQValue(){
+        return qValue;
+    }
 
     //----------------------------------------------SETTERS------------------------------------------------------------
 
@@ -125,22 +133,43 @@ public class Node {
         this.isEmpty = isEmpty;
     }
 
-    public void setQColor(double qValue){
-        if(qValue >= 0.0){
+    public void setQColor(){
+        if(qValue >= average){
             isGreen = true;
-            if(qValue > maxQColor){
-                maxQColor = qValue;
+            if(qValue > threshold[3]){
+                if(qValue > threshold[4]){
+                    if(qValue > threshold[5]){
+                        qColor = 255;
+                    }else{
+                        qColor = 192;
+                    }
+                }else{
+                    qColor = 129;
+                }
+            }else{
+                qColor = 66;
             }
-            qColor = (int)(255 * (qValue/maxQColor));
+
         }else{
             isGreen = false;
-            if(qValue < minQColor){
-                minQColor = qValue;
+            if(qValue < threshold[2]){
+                if(qValue < threshold[1]){
+                    if(qValue < threshold[0]){
+                        qColor = 66;
+                    }else{
+                        qColor = 129;
+                    }
+                }else{
+                    qColor = 192;
+                }
+            }else{
+                qColor = 255;
             }
-            qColor = (int)(255 *( -1*(qValue/minQColor)));
         }
 
-
+    }
+    public void setQValue(double qValue){
+        this.qValue = qValue;
     }
 
 

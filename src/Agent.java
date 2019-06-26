@@ -46,6 +46,8 @@ public class Agent extends Sprite{
         }else{
             System.out.println("Restarting... ");
             if(learningEpisodes > 0){
+                System.out.println("Q_Value Average: " + Node.average);
+                mainProg.getGrid().setNodeColors();
                 printQTableToConsole();
                 learningEpisodes--;
             }
@@ -138,13 +140,14 @@ public class Agent extends Sprite{
                    this.qTable[state][action] = rnd.nextDouble();
                }
                Node temp = mainProg.getGrid().getNodeByID(state);
-               temp.setQColor(calcAvgQValue(temp));
+               temp.setQValue(maxQ(temp.getId()));
                System.out.println(state + " :" + Arrays.toString(this.qTable[state]));
            }
        } else {
            System.out.println("qTable loaded from file.");
            this.qTable = qTable;
        }
+       mainProg.getGrid().setNodeColors();
 
     }
 
@@ -183,7 +186,7 @@ public class Agent extends Sprite{
 
         if(isTraining){
             updatePreviousStateQTableValue(nextAction);
-            previous.setQColor(calcAvgQValue(previous));
+            previous.setQValue(maxQ(previous.getId()));
         }
     }
     private double calcAvgQValue(Node node){

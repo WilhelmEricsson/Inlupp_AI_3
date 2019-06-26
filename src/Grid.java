@@ -1,6 +1,7 @@
 import processing.core.*;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 
 public class Grid {
     private int cols, rows;
@@ -82,6 +83,7 @@ public class Grid {
                 } else if (nodes[i][j].getReward() == 1) {
                     mainProg.stroke(0, 255, 0);
                 } else if (nodes[i][j].getReward() == 0) {
+                    nodes[i][j].setQColor();
                     mainProg.stroke(0);
                     if(nodes[i][j].isGreen()){
                         mainProg.fill(0 , nodes[i][j].getQColor(),0);
@@ -250,4 +252,30 @@ public class Grid {
         return nodesByID.get(nodeId);
     }
 
+    //********************************************************
+
+    public void setNodeColors(){
+        Node.average = 0;
+        for(int row = 0; row < rows; row++){
+            for(int col = 0; col < cols; col++){
+                Node.average += nodes[col][row].getQValue();
+            }
+        }
+        Node.average = Node.average/nodesByID.size();
+        setNodeColorThresholds();
+        for(int row = 0; row < rows; row++){
+            for(int col = 0; col < cols; col++){
+                nodes[col][row].setQColor();
+            }
+        }
+    }
+    private void setNodeColorThresholds(){
+        Node.threshold[0] = 0.25*Node.average;
+        Node.threshold[1] = 0.50*Node.average;
+        Node.threshold[2] = 0.75*Node.average;
+        Node.threshold[3] = 1.25*Node.average;
+        Node.threshold[4] = 1.50*Node.average;
+        Node.threshold[5] = 1.75*Node.average;
+    }
+    //********************************************************
 }

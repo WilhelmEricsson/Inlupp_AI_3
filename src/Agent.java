@@ -16,7 +16,7 @@ public class Agent extends Sprite{
     private double epsilon;
     private int trails, numOfBestAction, nextAction;
     //-----------------------------CONSTRUCTORS------------------------------------------
-    public Agent(PApplet mainProg, Node current, Node goal, PVector position, String name, float diameter, float radius, double ALPHA, double GAMMA){
+    public Agent(PApplet mainProg, Node current, Node goal, PVector position, String name, float diameter, float radius, double ALPHA, double GAMMA, double[][] qTable){
         super(position, name, diameter, radius);
         this.mainProg = (LabyrinthLearn) mainProg;
         this.current = current;
@@ -28,7 +28,7 @@ public class Agent extends Sprite{
         if(rnd == null){
             rnd = new Random();
         }
-        initializeQTable();
+        initializeQTable(qTable);
 
     }
     //***********************************************************************************
@@ -119,15 +119,21 @@ public class Agent extends Sprite{
     }
 
 
-   private void initializeQTable(){
-        int numOfStates = mainProg.getGrid().getRows()*mainProg.getGrid().getCols();
-        qTable = new double[numOfStates][NUM_OF_ACTIONS];
-        for(int state = 0; state < numOfStates; state++){
-            for(int action = 0; action < NUM_OF_ACTIONS; action++){
-                qTable[state][action] = rnd.nextDouble(); // fixa precision
+   private void initializeQTable(double[][] qTable){
+        if (qTable == null) {
+            int numOfStates = mainProg.getGrid().getRows()*mainProg.getGrid().getCols();
+            this.qTable = new double[numOfStates][NUM_OF_ACTIONS];
+            for(int state = 0; state < numOfStates; state++){
+                for(int action = 0; action < NUM_OF_ACTIONS; action++){
+                    this.qTable[state][action] = rnd.nextDouble(); // fixa precision
+                }
+                System.out.println(state + " :" + Arrays.toString(this.qTable[state]));
             }
-            System.out.println(state + " :" + Arrays.toString(qTable[state]));
+        } else {
+            System.out.println("qTable loaded from file.");
+            this.qTable = qTable;
         }
+
     }
 
     private int greedyEpsilonPolicy(){
@@ -155,8 +161,8 @@ public class Agent extends Sprite{
 
     }
 
-
-
-
+    public double[][] getQTable() {
+        return qTable.clone();
+    }
 
 }

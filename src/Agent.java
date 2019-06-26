@@ -1,5 +1,6 @@
 import processing.core.*;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 
@@ -45,6 +46,7 @@ public class Agent extends Sprite{
         }else{
             System.out.println("Restarting... ");
             if(learningEpisodes > 0){
+                printQTableToConsole();
                 learningEpisodes--;
             }
             current = mainProg.getGrid().getNodeByCoord(0,8);
@@ -130,12 +132,14 @@ public class Agent extends Sprite{
    private void initializeQTable(double[][] qTable){
        if (qTable == null) {
            int numOfStates = mainProg.getGrid().getRows()*mainProg.getGrid().getCols();
-           qTable = new double[numOfStates][NUM_OF_ACTIONS];
+           this.qTable = new double[numOfStates][NUM_OF_ACTIONS];
            for(int state = 0; state < numOfStates; state++){
                for(int action = 0; action < NUM_OF_ACTIONS; action++){
-                   qTable[state][action] = rnd.nextDouble();
+                   this.qTable[state][action] = rnd.nextDouble();
                }
-               System.out.println(state + " :" + Arrays.toString(qTable[state]));
+               Node temp = mainProg.getGrid().getNodeByID(state);
+               temp.setQColor(calcAvgQValue(temp));
+               System.out.println(state + " :" + Arrays.toString(this.qTable[state]));
            }
        } else {
            System.out.println("qTable loaded from file.");
@@ -176,9 +180,18 @@ public class Agent extends Sprite{
         }
         previous = current;
         current = current.getAdjacentNode(nextAction);
+
         if(isTraining){
             updatePreviousStateQTableValue(nextAction);
+            previous.setQColor(calcAvgQValue(previous));
         }
+    }
+    private double calcAvgQValue(Node node){
+        double average = 0.0;
+        for(int i = 0; i < NUM_OF_ACTIONS; i++){
+            average += qTable[node.getId()][i];
+        }
+        return average/NUM_OF_ACTIONS;
     }
 
 
@@ -191,6 +204,12 @@ public class Agent extends Sprite{
 
     public double[][] getQTable() {
         return qTable.clone();
+    }
+
+    public void printQTableToConsole(){
+        for(int state = 0; state < qTable.length; state++){
+            System.out.println(state + " :" + Arrays.toString(this.qTable[state]));
+        }
     }
 
 }

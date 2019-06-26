@@ -26,24 +26,22 @@ public class LabyrinthLearn extends PApplet{
 
     @Override
     public void setup() {
-        grid = new Grid(this,19, 19, 20);
         img = loadImage("labyrint1.png");
-        firstFrame = true;
+        drawLabyrinth();
+        grid = new Grid(this,19, 19, 20);
+
+
         frameRate(500);
         //Detta är tillfälligt vill bara rita ut agenten och se hur det såg ut
         Node agentStart = grid.getNodeByCoord(0,8);
-        double[][] qTable = readQTable(new File("qTable.txt"));
-        agent = new Agent(this, agentStart , grid.getNodeByCoord(18,10),agentStart.getPosition(), "Q-Agent", 20, 10, 0.1, 0.5, 10, qTable);
+        double[][] qTable = readQTable(new File("resources/qTable.txt"));
+        agent = new Agent(this, agentStart , grid.getNodeByCoord(18,10),agentStart.getPosition(), "Q-Agent", 20, 10, 0.5, 0.5, 100, null);
     }
 
     private void drawLabyrinth() {
         img.resize(404, 404);
         imageMode(CENTER);
         image(img, width/2, height/2);
-        if (firstFrame) {
-            grid.setupNodes();
-            firstFrame = false;
-        }
 
     }
 
@@ -96,7 +94,7 @@ public class LabyrinthLearn extends PApplet{
 
     public void printQTable(double[][] qTable) {
         try {
-            PrintWriter pw = new PrintWriter("qTable.txt");
+            PrintWriter pw = new PrintWriter("resources/qTable.txt");
             for (int i = 0; i < qTable.length; i++) {
                 for (int j = 0; j < qTable[i].length; j++) {
                     if (j != qTable[i].length -1) {
@@ -112,5 +110,7 @@ public class LabyrinthLearn extends PApplet{
             e.printStackTrace();
         }
     }
+
+
 
 }

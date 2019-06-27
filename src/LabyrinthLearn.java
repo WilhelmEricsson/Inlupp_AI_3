@@ -77,10 +77,14 @@ public class LabyrinthLearn extends PApplet{
             return grid;
     }
 
+
+    /*
+        Alla olika kommandom som kan användas i programmet.
+     */
     @Override
     public void keyPressed() {
             switch (key){
-                case 'd':
+                case 'd': // toggle grid
                     showDebugGUI = !showDebugGUI;
                     break;
                 case 's':
@@ -98,12 +102,16 @@ public class LabyrinthLearn extends PApplet{
                 case 'T':  //Training
                     agent.setAgentActivity(true);
                     break;
-                case '+':
+                case '+': //increase frame rate
                     setFrameRate(this.frameRate+10);
                     break;
-                case '-':
+                case '-': //decrease frame rate
                     setFrameRate(this.frameRate-10);
                     break;
+
+                    /*
+                        map alternatives 1-3, changes the map and restarts the agent.
+                     */
                 case '1':
                     changeMap(1);
                     break;

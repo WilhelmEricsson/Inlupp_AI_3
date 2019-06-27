@@ -71,6 +71,7 @@ public class LabyrinthLearn extends PApplet{
             return grid;
     }
 
+
     @Override
     public void keyPressed() {
             switch (key){

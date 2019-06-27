@@ -73,11 +73,14 @@ public class Grid {
     void display() {
         for (int i = 0; i < cols; i++) {
             for (int j = 0; j < rows; j++) {
+                int size = 5;
                 // Initialize each object
                 if (nodes[i][j].getReward() == -1) {
                     mainProg.stroke(255, 0, 0);
                 } else if (nodes[i][j].getReward() == 10) {
                     mainProg.stroke(0, 255, 0);
+                    mainProg.fill(0, 255, 0);
+                    size = 15;
                 } else if (nodes[i][j].getReward() == 0) {
                     nodes[i][j].setQColor();
                     mainProg.stroke(0);
@@ -89,7 +92,7 @@ public class Grid {
 
                 }
 
-                mainProg.ellipse(nodes[i][j].getPosition().x, nodes[i][j].getPosition().y, 5.0f, 5.0f);
+                mainProg.ellipse(nodes[i][j].getPosition().x, nodes[i][j].getPosition().y, size, size);
                 mainProg.fill(255,255,255);
             }
         }

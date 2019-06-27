@@ -6,6 +6,7 @@
  */
 import processing.core.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 
 public class Grid {
@@ -37,6 +38,8 @@ public class Grid {
         }
         determineAdjacentNodes();
     }
+
+    // Går igenom alla noder och fastställer deras grannar i väderstrecken N,Ö,S och V
     private void determineAdjacentNodes(){
         for (int i = 0; i < cols; i++) {
             for (int j = 0; j < rows; j++) {
@@ -45,6 +48,8 @@ public class Grid {
         }
     }
 
+
+    //Går igenom alla noder och avgör dess reward, alltså huruvida det är en väggnod(-1) eller en målnod(10) eller vägnod(0)
     public void setupNodes() {
         int counter = 0;
         for (int i = 0; i < rows; i++) {
@@ -174,12 +179,15 @@ public class Grid {
 
     //********************************************************
 
+    //Avgör vilken färg noderna skall ha genom att räkna ut ett genomsnitt och skapa trösklar för när en viss färg skall tilldelas. Vissa av noderna med höga Q-värden
+    //eller väggnoder(vars Q-värden aldrig ändras, alltså förblir höga) exkluderas för att skapa en mer rättvis färgläggning av noderna.
     public void setNodeColors(){
+        System.out.println("THRESHOLDS: " + Arrays.toString(Node.threshold));
         Node.average = 0;
         int numOfExcludedNodes = 0;
         for(int row = 0; row < rows; row++){
             for(int col = 0; col < cols; col++){
-                if(nodes[col][row].getReward() != -1){
+                if(nodes[col][row].getReward() != -1 && (Node.threshold[5] == 0.0 || nodes[col][row].getQValue() < 5*Node.threshold[5])){
                     Node.average += nodes[col][row].getQValue();
                 }else {
                     numOfExcludedNodes++;
@@ -194,6 +202,8 @@ public class Grid {
             }
         }
     }
+
+    //Sätter tröskelvärdena som användes vid bedömningen av nodernas färger.
     private void setNodeColorThresholds(){
         Node.threshold[0] = 0.25*Node.average;
         Node.threshold[1] = 0.50*Node.average;

@@ -134,6 +134,7 @@ public class LabyrinthLearn extends PApplet{
     }
     private void restartAgent(double[][] qTable){
         System.out.println("Restarting");
+        Node.threshold = new double[]{0.0,0.0,0.0,0.0,0.0,0.0};
         agent = new Agent(this, grid.getStartNode() , grid.getGoalNode(), grid.getStartNode().getPosition(), "Q-Agent", 20, 10, learningRate, discountFactor, episodes, qTable);
 
     }

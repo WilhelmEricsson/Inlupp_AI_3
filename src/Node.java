@@ -45,7 +45,7 @@ public class Node {
         this.adjacentNodes = new Node[4];
         this.isEmpty = true;
         if(threshold == null){
-            threshold = new double[6];
+            threshold = new double[]{0.0,0.0,0.0,0.0,0.0,0.0};
         }
     }
 

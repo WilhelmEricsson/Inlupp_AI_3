@@ -1,3 +1,9 @@
+/**
+ *
+ * Wilhelm Ericsson
+ * Ruben Wilhelmsen
+ *
+ */
 import processing.core.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -268,12 +274,17 @@ public class Grid {
 
     public void setNodeColors(){
         Node.average = 0;
+        int numOfExcludedNodes = 0;
         for(int row = 0; row < rows; row++){
             for(int col = 0; col < cols; col++){
-                Node.average += nodes[col][row].getQValue();
+                if(nodes[col][row].getReward() != -1){
+                    Node.average += nodes[col][row].getQValue();
+                }else {
+                    numOfExcludedNodes++;
+                }
             }
         }
-        Node.average = Node.average/nodesByID.size();
+        Node.average = Node.average/(nodesByID.size()- numOfExcludedNodes);
         setNodeColorThresholds();
         for(int row = 0; row < rows; row++){
             for(int col = 0; col < cols; col++){

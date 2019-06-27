@@ -1,6 +1,13 @@
+/**
+ *
+ * Wilhelm Ericsson
+ * Ruben Wilhelmsen
+ *
+ */
+
+
 import processing.core.*;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 
@@ -99,7 +106,6 @@ public class Agent extends Sprite{
         }else{
             double reward = -1;
             qTable[prevState][action] = qTable[prevState][action] + ALPHA*((reward) - qTable[prevState][action]);
-
             //System.out.println("CHANGE: STATE - " + prevState + " Action - " + action + " values -> " + qTable[prevState][action] + "\t|WALKED INTO A WALL| -- E: " + epsilon);
             current = previous;
         }

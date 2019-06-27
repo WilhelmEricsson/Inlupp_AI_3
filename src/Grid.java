@@ -45,14 +45,6 @@ public class Grid {
         }
     }
 
-    public void printIds() {
-        for (int i = 0; i < cols; i++) {
-            for (int j = 0; j < rows; j++) {
-                System.out.println(nodes[i][j].getId());
-            }
-        }
-    }
-
     public void setupNodes() {
         int counter = 0;
         for (int i = 0; i < rows; i++) {
@@ -110,21 +102,6 @@ public class Grid {
     }
 
     //***************************************************
-    // ANVÄNDS INTE!
-    PVector getNearestNode1(PVector pvec) {
-        //PVector pvec = new PVector(x,y);
-        PVector vec = new PVector(0, 0);
-        for (int i = 0; i < cols; i++) {
-            for (int j = 0; j < rows; j++) {
-                if (nodes[i][j].getPosition().dist(pvec) < grid_size/2) {
-                    vec.set(nodes[i][j].getPosition());
-                }
-            }
-        }
-        return vec;
-    }
-
-    //***************************************************
     Node getNearestNode(PVector pvec) {
         // En justering för extremvärden.
         float tempx = pvec.x;
@@ -160,81 +137,6 @@ public class Grid {
         }
 
         return nearestNode;
-    }
-
-    // Node getNearestNodePosition(PVector pvec) {
-
-    //  ArrayList<Node> nearestNodes = new ArrayList<Node>();
-
-    //  for (int i = 0; i < cols; i++) {
-    //    for (int j = 0; j < rows; j++) {
-    //      if (nodes[i][j].position.dist(pvec) < grid_size) {
-    //        nearestNodes.add(nodes[i][j]);
-    //      }
-    //    }
-    //  }
-
-    //  Node nearestNode = new Node(0,0);
-    //  for (int i = 0; i < nearestNodes.size(); i++) {
-    //    if (nearestNodes.get(i).position.dist(pvec) < nearestNode.position.dist(pvec) ) {
-    //      nearestNode = nearestNodes.get(i);
-    //    }
-    //  }
-
-    //  return nearestNode;
-    //}
-
-    //***************************************************
-    PVector getNearestNodePosition(PVector pvec) {
-        Node n = getNearestNode(pvec);
-
-        return n.getPosition();
-    }
-
-    //***************************************************
-    // ANVÄNDS INTE?
-    void displayNearestNode(float x, float y) {
-        PVector pvec = new PVector(x, y);
-        displayNearestNode(pvec);
-    }
-
-    //***************************************************
-    // ANVÄNDS INTE!
-    void displayNearestNode1(PVector pvec) {
-        //PVector pvec = new PVector(x,y);
-        for (int i = 0; i < cols; i++) {
-            for (int j = 0; j < rows; j++) {
-                if (nodes[i][j].getPosition().dist(pvec) < grid_size/2) {
-                    PVector vec = nodes[i][j].getPosition();
-                    mainProg.ellipse(vec.x, vec.y, 5, 5);
-                }
-            }
-        }
-    }
-
-    //***************************************************
-    void displayNearestNode(PVector pvec) {
-
-        PVector vec = getNearestNodePosition(pvec);
-        mainProg.ellipse(vec.x, vec.y, 5, 5);
-    }
-
-    //***************************************************
-    PVector getRandomNodePosition() {
-        int c = (int)mainProg.random(cols);
-        int r = (int)mainProg.random(rows);
-
-        PVector rn = nodes[c][r].getPosition();
-
-        return rn;
-    }
-
-    //***************************************************
-    public Node getRandomNode() {
-        int c = (int)mainProg.random(cols);
-        int r = (int)mainProg.random(rows);
-
-        return nodes[c][r];
     }
 
     // Används troligen tillsammans med getNearestNode().empty

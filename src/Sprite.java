@@ -19,12 +19,6 @@ public class Sprite {
         this.diameter = diameter;
         this.radius = radius;
     }
-    public  Sprite(Sprite other){
-         position = other.position;
-         name = other.name;
-         diameter = other.diameter;
-         radius = other.radius;
-    }
 
 
     //**''''''''''''''''''''''''''''''''''''''''''''''''''''''

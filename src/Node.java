@@ -50,15 +50,6 @@ public class Node {
     }
 
     //***************************************************
-   public Node(float tempX, float tempY, float tempW, float tempH, float tempAngle) {
-        x = tempX;
-        y = tempY;
-        w = tempW;
-        h = tempH;
-        angle = tempAngle;
-    }
-
-    //***************************************************
     public boolean empty() {
         return this.isEmpty;
     }

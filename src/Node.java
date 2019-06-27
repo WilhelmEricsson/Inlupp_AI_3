@@ -1,12 +1,23 @@
-import processing.core.PApplet;
+/**
+ *
+ * Wilhelm Ericsson
+ * Ruben Wilhelmsen
+ *
+ */
+
 import processing.core.PVector;
+
 public class Node {
+    //Dessa två statiskavariabler används för att avgöra vilken färg som noden skall ritas i.
     public static double average;
+    //Index: 0-2 innebär röd färg, 3-5 innebär grön
+    //0: 0.25*average, 1: 0.5*average, 2: 0.75*average, 3: 1.25*average, 4: 1.5*average, 5: 1.75*average
     public static double[] threshold;
+
     // A node object knows about its location in the grid
     // as well as its size with the variables x,y,w,h
-    private float x,y;   // x,y location
-    private float w,h;   // width and height
+    private float x, y;   // x,y location
+    private float w, h;   // width and height
     private float angle; // angle for oscillating brightness
     private PVector position;
     private int qColor;
@@ -35,8 +46,8 @@ public class Node {
         this.row = _id_row;
         this.adjacentNodes = new Node[4];
         this.isEmpty = true;
-        if(threshold == null){
-            threshold = new double[6];
+        if (threshold == null) {
+            threshold = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
         }
     }
 
@@ -53,15 +64,17 @@ public class Node {
         this.reward = reward;
     }
 
-    public void determineAdjacentNodes(Grid grid){
+    //Anävnds för att hämta intilliggande noder i väderstecken - N,Ö,S och V. I vissa fall finns det ingen nod i det givna väderstecket, detta
+    // sker till exempel med nod 0,0 som befinner sig uppe i vänstra hörnet vilket gör att N och V är null värden.
+    public void determineAdjacentNodes(Grid grid) {
         //NORTH
-        adjacentNodes[0] = grid.getNodeByCoord(row-1,col);
+        adjacentNodes[0] = grid.getNodeByCoord(row - 1, col);
         //EAST
-        adjacentNodes[1] = grid.getNodeByCoord(row,col+1);
+        adjacentNodes[1] = grid.getNodeByCoord(row, col + 1);
         //SOUTH
-        adjacentNodes[2] = grid.getNodeByCoord(row+1,col);
+        adjacentNodes[2] = grid.getNodeByCoord(row + 1, col);
         //WEST
-        adjacentNodes[3] = grid.getNodeByCoord(row,col-1);
+        adjacentNodes[3] = grid.getNodeByCoord(row, col - 1);
     }
 
 
@@ -105,66 +118,74 @@ public class Node {
     public int getReward() {
         return reward;
     }
-    public Node getAdjacentNode(int action){
+
+    public Node getAdjacentNode(int action) {
         return adjacentNodes[action];
     }
-    public int getQColor(){
+
+    public int getQColor() {
         return qColor;
     }
-    public boolean isGreen(){
+
+    //Denna boolean används vid utritandet av noden i Grid-klassen.
+    public boolean isGreen() {
         return isGreen;
     }
-    public double getQValue(){
+
+    public double getQValue() {
         return qValue;
     }
 
     //----------------------------------------------SETTERS------------------------------------------------------------
 
-    public void setIsEmpty(boolean isEmpty){
+    public void setIsEmpty(boolean isEmpty) {
         this.isEmpty = isEmpty;
     }
 
-    public void setQColor(){
-        if(qValue >= average){
+
+    //Användes för att ändra nodens färg i förhållande till agentens Q-värde kopplat till noden (I denna implementation så används det högsta q-värdet).
+    public void setQColor() {
+        if (qValue >= average) {
             isGreen = true;
-            if(qValue > threshold[3]){
-                if(qValue > threshold[4]){
-                    if(qValue > threshold[5]){
+            if (qValue > threshold[3]) {
+                if (qValue > threshold[4]) {
+                    if (qValue > threshold[5]) {
                         qColor = 255;
-                    }else{
+                    } else {
                         qColor = 192;
                     }
-                }else{
+                } else {
                     qColor = 129;
                 }
-            }else{
+            } else {
                 qColor = 66;
             }
 
-        }else{
+        } else {
             isGreen = false;
-            if(qValue < threshold[2]){
-                if(qValue < threshold[1]){
-                    if(qValue < threshold[0]){
+            if (qValue < threshold[2]) {
+                if (qValue < threshold[1]) {
+                    if (qValue < threshold[0]) {
                         qColor = 255;
-                    }else{
+                    } else {
                         qColor = 192;
                     }
-                }else{
+                } else {
                     qColor = 129;
 
                 }
-            }else{
+            } else {
                 qColor = 66;
             }
         }
 
     }
-    public void setQValue(double qValue){
+
+    //Sätter nodens Q-värde, denna metod kallas på från Agent-klassen och använder det högsta Q-vädert kopplat till tillståndet(nodenn). Anledningen att sätta
+    // ett Q-värde i nod-klassen var för att kunna använda det för att ändra färg på noden.
+    public void setQValue(double qValue) {
         this.qValue = qValue;
     }
-
-
 
 
 }

@@ -1,8 +1,6 @@
 /**
- *
  * Wilhelm Ericsson
  * Ruben Wilhelmsen
- *
  */
 
 import processing.core.PVector;
@@ -13,7 +11,7 @@ public class Sprite {
     public float diameter, radius;
 
     //-----------------------CONSTRUCTORS---------------------
-    public Sprite(PVector position, String name, float diameter, float radius){
+    public Sprite(PVector position, String name, float diameter, float radius) {
         this.position = position;
         this.name = name;
         this.diameter = diameter;

@@ -1,5 +1,14 @@
+/**
+ *
+ * Wilhelm Ericsson
+ * Ruben Wilhelmsen
+ *
+ */
+
 import processing.core.*;
+
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 
 public class Grid {
@@ -9,8 +18,9 @@ public class Grid {
     private HashMap<Integer, Node> nodesByID;
     private Node startNode, goalNode;
     private PApplet mainProg;
+
     //***************************************************
-    Grid(PApplet mainProg,int _cols, int _rows, int _grid_size) {
+    Grid(PApplet mainProg, int _cols, int _rows, int _grid_size) {
         this.mainProg = mainProg;
         cols = _cols;
         rows = _rows;
@@ -26,12 +36,14 @@ public class Grid {
         for (int i = 0; i < cols; i++) {
             for (int j = 0; j < rows; j++) {
                 // Initialize each object
-                nodes[i][j] = new Node(i, j, i*grid_size+grid_size, j*grid_size+grid_size);
+                nodes[i][j] = new Node(i, j, i * grid_size + grid_size, j * grid_size + grid_size);
             }
         }
         determineAdjacentNodes();
     }
-    private void determineAdjacentNodes(){
+
+    // Går igenom alla noder och fastställer deras grannar i väderstrecken N,Ö,S och V
+    private void determineAdjacentNodes() {
         for (int i = 0; i < cols; i++) {
             for (int j = 0; j < rows; j++) {
                 nodes[i][j].determineAdjacentNodes(this);
@@ -39,11 +51,13 @@ public class Grid {
         }
     }
 
+
+    //Går igenom alla noder och avgör dess reward, alltså huruvida det är en väggnod(-1) eller en målnod(10) eller vägnod(0)
     public void setupNodes() {
         int counter = 0;
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
-                if (mainProg.get((int)nodes[j][i].getPosition().x, (int)nodes[j][i].getPosition().y) != -1) {
+                if (mainProg.get((int) nodes[j][i].getPosition().x, (int) nodes[j][i].getPosition().y) != -1) {
                     nodes[j][i].setReward(-1);
                     nodes[j][i].setIsEmpty(false);
                 } else {
@@ -62,7 +76,7 @@ public class Grid {
                     }
                 }
                 nodes[j][i].setId(counter);
-                nodesByID.put(counter,nodes[j][i]);
+                nodesByID.put(counter, nodes[j][i]);
                 counter++;
             }
         }
@@ -84,16 +98,16 @@ public class Grid {
                 } else if (nodes[i][j].getReward() == 0) {
                     nodes[i][j].setQColor();
                     mainProg.stroke(0);
-                    if(nodes[i][j].isGreen()){
-                        mainProg.fill(0 , nodes[i][j].getQColor(),0);
-                    }else{
-                        mainProg.fill(nodes[i][j].getQColor(), 0 , 0);
+                    if (nodes[i][j].isGreen()) {
+                        mainProg.fill(0, nodes[i][j].getQColor(), 0);
+                    } else {
+                        mainProg.fill(nodes[i][j].getQColor(), 0, 0);
                     }
 
                 }
 
                 mainProg.ellipse(nodes[i][j].getPosition().x, nodes[i][j].getPosition().y, size, size);
-                mainProg.fill(255,255,255);
+                mainProg.fill(255, 255, 255);
             }
         }
     }
@@ -104,14 +118,14 @@ public class Grid {
         float tempx = pvec.x;
         float tempy = pvec.y;
         if (pvec.x < 5) {
-            tempx=5;
-        } else if (pvec.x > mainProg.width-5) {
-            tempx= mainProg.width-5;
+            tempx = 5;
+        } else if (pvec.x > mainProg.width - 5) {
+            tempx = mainProg.width - 5;
         }
         if (pvec.y < 5) {
-            tempy=5;
-        } else if (pvec.y > mainProg.height-5) {
-            tempy= mainProg.height-5;
+            tempy = 5;
+        } else if (pvec.y > mainProg.height - 5) {
+            tempy = mainProg.height - 5;
         }
 
         pvec = new PVector(tempx, tempy);
@@ -128,7 +142,7 @@ public class Grid {
 
         Node nearestNode = new Node(0, 0);
         for (int i = 0; i < nearestNodes.size(); i++) {
-            if (nearestNodes.get(i).getPosition().dist(pvec) < nearestNode.getPosition().dist(pvec) ) {
+            if (nearestNodes.get(i).getPosition().dist(pvec) < nearestNode.getPosition().dist(pvec)) {
                 nearestNode = nearestNodes.get(i);
             }
         }
@@ -139,25 +153,26 @@ public class Grid {
     // Används troligen tillsammans med getNearestNode().empty
     // om tom så addContent(Sprite)
     //'''''''''''''''''''''''''''''''''''''''''''''''''''''''
-    public Node getNodeByCoord(int row, int col){
-        try{
+    public Node getNodeByCoord(int row, int col) {
+        try {
             return nodes[col][row];
-        }catch (IndexOutOfBoundsException e){
+        } catch (IndexOutOfBoundsException e) {
             return null;
         }
     }
 
 
     //*******************************************************
-    public int getCols(){
+    public int getCols() {
         return cols;
     }
-    public int getRows(){
+
+    public int getRows() {
         return rows;
     }
 
 
-    public Node getNodeByID(int nodeId){
+    public Node getNodeByID(int nodeId) {
         return nodesByID.get(nodeId);
     }
 
@@ -171,28 +186,38 @@ public class Grid {
 
     //********************************************************
 
-    public void setNodeColors(){
+    //Avgör vilken färg noderna skall ha genom att räkna ut ett genomsnitt och skapa trösklar för när en viss färg skall tilldelas. Vissa av noderna med höga Q-värden
+    //eller väggnoder(vars Q-värden aldrig ändras, alltså förblir höga) exkluderas för att skapa en mer rättvis färgläggning av noderna.
+    public void setNodeColors() {
+        System.out.println("THRESHOLDS: " + Arrays.toString(Node.threshold));
         Node.average = 0;
-        for(int row = 0; row < rows; row++){
-            for(int col = 0; col < cols; col++){
-                Node.average += nodes[col][row].getQValue();
+        int numOfExcludedNodes = 0;
+        for (int row = 0; row < rows; row++) {
+            for (int col = 0; col < cols; col++) {
+                if (nodes[col][row].getReward() != -1 && (Node.threshold[5] == 0.0 || nodes[col][row].getQValue() < 5 * Node.threshold[5])) {
+                    Node.average += nodes[col][row].getQValue();
+                } else {
+                    numOfExcludedNodes++;
+                }
             }
         }
-        Node.average = Node.average/nodesByID.size();
+        Node.average = Node.average / (nodesByID.size() - numOfExcludedNodes);
         setNodeColorThresholds();
-        for(int row = 0; row < rows; row++){
-            for(int col = 0; col < cols; col++){
+        for (int row = 0; row < rows; row++) {
+            for (int col = 0; col < cols; col++) {
                 nodes[col][row].setQColor();
             }
         }
     }
-    private void setNodeColorThresholds(){
-        Node.threshold[0] = 0.25*Node.average;
-        Node.threshold[1] = 0.50*Node.average;
-        Node.threshold[2] = 0.75*Node.average;
-        Node.threshold[3] = 1.25*Node.average;
-        Node.threshold[4] = 1.50*Node.average;
-        Node.threshold[5] = 1.75*Node.average;
+
+    //Sätter tröskelvärdena som användes vid bedömningen av nodernas färger.
+    private void setNodeColorThresholds() {
+        Node.threshold[0] = 0.25 * Node.average;
+        Node.threshold[1] = 0.50 * Node.average;
+        Node.threshold[2] = 0.75 * Node.average;
+        Node.threshold[3] = 1.25 * Node.average;
+        Node.threshold[4] = 1.50 * Node.average;
+        Node.threshold[5] = 1.75 * Node.average;
     }
     //********************************************************
 }

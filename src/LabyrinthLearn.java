@@ -184,7 +184,7 @@ public class LabyrinthLearn extends PApplet{
             this.frameRate = frameRate;
             if(this.frameRate <= 0) {
                 System.err.println("Frame rate at its lowest!");
-                this.frameRate = 50;
+                this.frameRate = 10;
             }
             frameRate(this.frameRate);
     }

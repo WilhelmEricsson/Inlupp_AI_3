@@ -14,8 +14,8 @@ public class LabyrinthLearn extends PApplet{
     private int episodes = 100;
     private int currentMaze = 1;
     public static int frameRate;
+    private boolean showDebugGUI = false;
 
-    // Set this according to labyrinth size
     private String filePath = "resources/laby1_qTable.txt";
     private final int GRID_SIZE = 20;
     private final int WINDOW_SIZE = GRID_SIZE * GRID_SIZE;
@@ -41,7 +41,6 @@ public class LabyrinthLearn extends PApplet{
         drawLabyrinth();
         grid = new Grid(this,GRID_SIZE-1, GRID_SIZE-1, GRID_SIZE);
         setFrameRate(500);
-        //Detta är tillfälligt vill bara rita ut agenten och se hur det såg ut
         double[][] qTable = readQTable(new File(filePath));
         agent = new Agent(this, grid.getStartNode() , grid.getGoalNode(), grid.getStartNode().getPosition(), "Q-Agent", 20, 10, learningRate, discountFactor, episodes, qTable);
     }
@@ -61,9 +60,11 @@ public class LabyrinthLearn extends PApplet{
     public void draw() {
         surface.setTitle("|Labyrinth " + currentMaze + "| ***" + agent.getAgentActivity() + "*** Episode: " + agent.getLearningEpisodes());
         drawLabyrinth();
-        grid.display();
+        if (showDebugGUI) {
+            grid.display();
+            agent.drawNodeInfo();
+        }
         agent.update();
-        agent.drawNodeInfo();
     }
 
     public Grid getGrid(){
@@ -73,6 +74,9 @@ public class LabyrinthLearn extends PApplet{
     @Override
     public void keyPressed() {
             switch (key){
+                case 'd':
+                    showDebugGUI = !showDebugGUI;
+                    break;
                 case 's':
                     saveQTable(agent.getQTable());
                     break;

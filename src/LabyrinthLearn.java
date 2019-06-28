@@ -88,7 +88,7 @@ public class LabyrinthLearn extends PApplet {
             case 'd': // toggle grid
                 showDebugGUI = !showDebugGUI;
                 break;
-            case 's':
+            case 's': // Save agent progress to Q-table, will overwrite previous progress.
                 saveQTable(agent.getQTable());
                 break;
             case 'r'://Reset

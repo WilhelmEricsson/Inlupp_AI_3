@@ -267,6 +267,7 @@ public class Agent extends Sprite {
         }
     }
 
+
     public void setAgentActivity(boolean isTraining) {
         if (isTraining != this.isTraining) {
             if (!isTraining) {
